@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project>                                  
+  <executable name="dist/default/production/Practica8.X.production.elf">                 
+    <memory name="program">                 
+      <units>bytes</units>                 
+      <length>66704</length>                 
+      <used>2352</used>                     
+      <free>64352</free>                     
+    </memory>                              
+    <memory name="data">              
+      <units>bytes</units>                 
+      <length>16384</length>                 
+      <used>4</used>                     
+      <free>16380</free>                     
+    </memory>                              
+  </executable>                            
+</project>                                 

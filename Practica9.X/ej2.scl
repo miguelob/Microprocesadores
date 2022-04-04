@@ -1,0 +1,158 @@
+configuration for "pic32mx230f064d" is
+end configuration;
+testbench for "pic32mx230f064d" is
+  begin
+      process is
+          variable t_ini : cycle; -- Tiempo inicial del pulso
+          variable t_fin : cycle; -- Tiempo final del pulso
+          variable ancho_pulso: cycle;
+      begin
+          
+          report("Comienza la simulación");
+          RB5 <= '1'; -- Pulsador en reposo
+          
+          wait for 1 ms;
+          -- Medimos el pulso de salida
+          wait until RB15 == '0';
+          
+          wait until RB15 == '1';
+          t_ini := now(); -- El tiempo se mide en ciclos de reloj
+
+          wait until RB15 == '0';
+          t_fin := now();
+
+          ancho_pulso := (t_fin - t_ini); -- Ancho en ciclos. Reloj a 5 MHz
+
+          report("Test 1: Servo a -90 grados.");
+          -- El ancho del pulso ha de ser de 1 ms,
+          -- que a 5 MHz son 1 ms * 5MHz = 5000 ciclos 
+          if ancho_pulso > 4990 ic then
+            if ancho_pulso < 5010 ic then
+              report("Test 1: ancho de pulso OK");
+            else
+              report("Test 1: ancho de pulso erróneo. Demasiado grande.");
+            end if;
+          else
+            report("Test 1: ancho de pulso erróneo. Demasiado pequeño.");
+          end if;
+
+          -- Pulsamos el pulsador una vez para incrementar el ancho del pulso
+          RB5 <= '0';
+          report("Pulsador pulsado");
+          wait for 1 ms;
+          RB5 <= '1';
+          
+          -- Medimos el pulso de salida
+          wait until RB15 == '0';
+          
+          wait until RB15 == '1';
+          t_ini := now(); -- El tiempo se mide en ciclos de reloj
+
+          wait until RB15 == '0';
+          t_fin := now();
+
+          ancho_pulso := (t_fin - t_ini); -- Ancho en ciclos. Reloj a 5 MHz
+          report("Test 2: servo a -30 grados");
+          -- El ancho del pulso ha de ser de 1 ms + 60/180 ms = 1,3333
+          -- que a 5 MHz son 1,3333 ms * 5MHz = 6666,66 ciclos 
+          if ancho_pulso > 6650 ic then
+            if ancho_pulso < 6680 ic then
+              report("Test 2: ancho de pulso OK");
+            else
+              report("Test 2: ancho de pulso erróneo. Demasiado grande.");
+            end if;
+          else
+            report("Test 2: ancho de pulso erróneo. Demasiado pequeño.");
+          end if;
+			
+		-- VOLVEMOS A PULSAR	
+		RB5 <= '0';
+          report("Pulsador pulsado");
+          wait for 1 ms;
+          RB5 <= '1';
+          
+          -- Medimos el pulso de salida
+          wait until RB15 == '0';
+          
+          wait until RB15 == '1';
+          t_ini := now(); -- El tiempo se mide en ciclos de reloj
+
+          wait until RB15 == '0';
+          t_fin := now();
+
+          ancho_pulso := (t_fin - t_ini); -- Ancho en ciclos. Reloj a 5 MHz
+          report("Test 3: servo a 30 grados");
+          -- El ancho del pulso ha de ser de 1 ms + 2*(60/180) ms = 1,66666
+          -- que a 5 MHz son 1,6666 ms * 5MHz = 8333.33 ciclos 
+          if ancho_pulso > 8320 ic then
+            if ancho_pulso < 8340 ic then
+              report("Test 3: ancho de pulso OK");
+            else
+              report("Test 3: ancho de pulso erróneo. Demasiado grande.");
+            end if;
+          else
+            report("Test 3: ancho de pulso erróneo. Demasiado pequeño.");
+          end if;
+          
+		  -- Probamos siguiente
+		  RB5 <= '0';
+          report("Pulsador pulsado");
+          wait for 1 ms;
+          RB5 <= '1';
+          
+          -- Medimos el pulso de salida
+          wait until RB15 == '0';
+          
+          wait until RB15 == '1';
+          t_ini := now(); -- El tiempo se mide en ciclos de reloj
+
+          wait until RB15 == '0';
+          t_fin := now();
+
+          ancho_pulso := (t_fin - t_ini); -- Ancho en ciclos. Reloj a 5 MHz
+          report("Test 4: servo a 90 grados");
+          -- El ancho del pulso ha de ser de 1 ms + 3*(60/180) ms = 2
+          -- que a 5 MHz son 2 ms * 5MHz = 10000 ciclos
+          if ancho_pulso > 9990 ic then
+            if ancho_pulso < 10010 ic then
+              report("Test 4: ancho de pulso OK");
+            else
+              report("Test 4: ancho de pulso erróneo. Demasiado grande.");
+            end if;
+          else
+            report("Test 4: ancho de pulso erróneo. Demasiado pequeño.");
+          end if;
+		  
+		  -- VOLVEMOS A -90
+		  RB5 <= '0';
+          report("Pulsador pulsado");
+          wait for 1 ms;
+          RB5 <= '1';
+          
+          -- Medimos el pulso de salida
+          wait until RB15 == '0';
+          
+          wait until RB15 == '1';
+          t_ini := now(); -- El tiempo se mide en ciclos de reloj
+
+          wait until RB15 == '0';
+          t_fin := now();
+			
+		ancho_pulso := (t_fin - t_ini);
+          report("Test 5: Servo a -90 grados.");
+          -- El ancho del pulso ha de ser de 1 ms,
+          -- que a 5 MHz son 1 ms * 5MHz = 5000 ciclos 
+          if ancho_pulso > 4990 ic then
+            if ancho_pulso < 5010 ic then
+              report("Test 5: ancho de pulso OK");
+            else
+              report("Test 5: ancho de pulso erróneo. Demasiado grande.");
+            end if;
+          else
+            report("Test 5: ancho de pulso erróneo. Demasiado pequeño.");
+          end if;
+		  
+          report("Fin de la simulación");
+          wait;
+         end process;
+  end testbench;

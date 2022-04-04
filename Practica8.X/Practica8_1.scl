@@ -1,0 +1,33 @@
+configuration for "pic32mx230f064d" is
+end configuration;
+testbench for "pic32mx230f064d" is
+  begin
+      process is
+        begin
+          report("Comienza la simulación");
+          AN5 <= 900 mV;
+          wait for 10 ms;
+          if PORTC == 2#1011# then
+             report("Primera conversión OK");
+          else
+             report("Error en la 1ª conversión: el puerto C no es válido");
+          end if;
+          AN5 <= 1800 mV;
+          wait for 10 ms;
+          if PORTC == 2#0111# then
+             report("Segunda conversión OK");
+          else
+             report("Error en la 2ª conversión: el puerto C no es válido");
+          end if;
+
+          AN5 <= 2700 mV;
+          wait for 10 ms;
+          if PORTC == 2#0010# then
+             report("Tercera conversión OK");
+          else
+             report("Error en la 3ª conversión: el puerto C no es válido");
+          end if;
+          report("Fin de la simulación");
+          wait;
+         end process;
+  end testbench;

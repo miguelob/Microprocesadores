@@ -1,0 +1,89 @@
+configuration for "pic32mx230f064d" is
+end configuration;
+testbench for "pic32mx230f064d" is
+  begin
+      process is
+        begin
+          report("Comienza la simulación");
+          -- Ponemos en primer lugar la consigna a 20,0 ºC. 20 en binario es
+          -- 10100. Como tenemos un decimal de un bit, 20,0 es 101000.
+          RC4 <= '0';
+          RC5 <= '0';
+          RC6 <= '0';
+          RC7 <= '1';
+          RC8 <= '0';
+          RC9 <= '1';
+
+          -- Ahora vamos a poner la temperatura de las 4 habitaciones a 20,0 ºC
+          -- Según la característica del sensor, para 20 ºC, la tensión que
+          -- genera el sensor es de 0,103226 * 20 = 2,06451 V
+
+          AN5 <= 2065 mV; -- De momento dejamos la tensión sin ruido
+          
+          wait for 10 ms; -- Aquí debería haber terminado la conversión
+          wait for 1 ms; -- Esperamos un poco más por si acaso.
+
+          -- Como la calefacción en el arranque del programa está desconectada
+          -- debería seguir así.
+          if RB15 == '0' then
+             report("Test 1 OK. Calefacción apagada en el inicio.");
+          else
+             report("Test 1 Error. Calefacción arrancada en el inicio.");
+          end if;
+
+          -- Ahora bajaremos la temperatura a 19 grados para que se encienda la
+          -- calefacción. A 19 ºC la tensión del sensor es 1,9613 V
+          AN5 <= 1961 mV; -- De momento dejamos la tensión sin ruido
+
+          wait for 10 ms;
+          if RB15 == '1' then
+             report("Test 2 OK. Calefacción encendida con T=19 ºC.");
+          else
+             report("Test 2 Error. Calefacción apagada con T=19 ºC.");
+          end if;
+
+          -- Ahora subimos la temperatura a 21 grados para que se encienda la
+          -- calefacción. A 21 ºC la tensión del sensor es 2,1677 V
+          AN5 <= 2168 mV; -- De momento dejamos la tensión sin ruido
+          wait for 10 ms;
+          if RB15 == '0' then
+             report("Test 3 OK. Calefacción apagada con T=21 ºC.");
+          else
+             report("Test 3 Error. Calefacción encendida con T=21 ºC.");
+          end if;
+
+          -- Bajamos la temperatura a 19 grados, pero ahora simulamos ruido en
+          -- la señal. El ruido es enorme para ver si se hacen bien las medidas
+          AN5 <= 1561 mV;
+          wait for 2500 us;
+          AN5 <= 1761 mV;
+          wait for 2500 us;
+          AN5 <= 2161 mV;
+          wait for 2500 us;
+          AN4 <= 1361 mV;
+          AN5 <= 2361 mV;
+          wait for 2500 us;
+          if RB15 == '1' then
+             report("Test 4 OK. Calefacción encendida con T = 19 ºC.");
+          else
+             report("Test 4 Error. Calefacción apagada con T = 19 ºC.");
+          end if;
+
+          -- Ahora vamos a bajar la consigna para ver si se apaga la
+          -- calefacción. Pondremos la consigna a 18 grados (100100).
+          RC4 <= '0';
+          RC5 <= '0';
+          RC6 <= '1';
+          RC7 <= '0';
+          RC8 <= '0';
+          RC9 <= '1';
+          wait for 10 ms;
+          if RB15 == '0' then
+             report("Test 5 OK. Calefacción apagada con T = 19 ºC y consigna a 18 ºC");
+          else
+             report("Test 5 Error. Calefacción encendida con T = 19 ºC y consigna a 18 ºC");
+          end if;
+          report("Fin de la simulación");
+          wait;
+         end process;
+  end testbench;
